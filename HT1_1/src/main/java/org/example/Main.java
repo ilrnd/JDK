@@ -1,9 +1,15 @@
 package org.example;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.awt.*;
+
+
 public class Main {
     public static void main(String[] args) {
+
         ServerWindow serverWindow = new ServerWindow();
+        ClientGUI clientGUI1 = new ClientGUI(serverWindow, "Client1");
+        ClientGUI clientGUI2 = new ClientGUI(serverWindow, "Client2");
+        serverWindow.printClients();
+
     }
 }

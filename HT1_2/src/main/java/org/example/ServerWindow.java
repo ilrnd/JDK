@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerWindow extends JFrame {
     private static final int POS_X = 500;
@@ -26,16 +24,6 @@ public class ServerWindow extends JFrame {
     private final JButton btnStop = new JButton("Stop");
     private final JTextArea log = new JTextArea(SERVER_STATUS_OFF);
     private boolean isServerWorking;
-
-    private List<Message> messages = new ArrayList<>();
-
-    private JTextArea chat = new JTextArea();
-    private JScrollPane scrollChat = new JScrollPane(chat);
-
-    private List<ClientGUI> clientGUIS = new ArrayList<>();
-
-
-
 
     public ServerWindow() {
         isServerWorking = false;
@@ -75,48 +63,8 @@ public class ServerWindow extends JFrame {
         setVisible(true);
     }
 
-    public void addMessage(Message message){
-        messages.add(message);
-        System.out.println(message.getText());
+    public void getMessage(){
+
     }
 
-    public StringBuilder getMessages(){
-        StringBuilder stringBuilder = new StringBuilder();
-        for(Message message: messages){
-            stringBuilder.append(message.getText());
-            stringBuilder.append("\n");
-        }
-        return stringBuilder;
-    }
-
-    public JTextArea getChat() {
-        return chat;
-    }
-
-    public void addClient(ClientGUI clientGUI){
-        this.clientGUIS.add(clientGUI);
-    }
-
-
-
-    public void printClients(){
-        for (ClientGUI clientGUI: clientGUIS){
-            System.out.println(clientGUI.clientInfo());
-        }
-    }
-
-    public void updateChat(){
-        for (Message message: messages){
-            chat.append(message.getText());
-            chat.append("\n");
-        }
-        scrollChat.add(chat);
-        for (ClientGUI clientGUI: clientGUIS){
-            clientGUI.chatArea = new JScrollPane(chat);
-        }
-    }
-
-    public JScrollPane getScrollChat() {
-        return scrollChat;
-    }
 }
