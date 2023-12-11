@@ -89,6 +89,11 @@ public class ClientGUI extends JFrame implements Observer {
 
     }
 
+/**
+ * TODO: Доработать в случае отключения сервера вывод сообщения!
+ * TODO: Сделать архив чата
+ * TODO: при подключении загрузить сообщения
+ */
 
     private void sendMessage(){
         String message;
