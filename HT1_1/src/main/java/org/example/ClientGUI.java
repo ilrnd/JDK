@@ -1,25 +1,18 @@
 package org.example;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.List;
 
-public class ClientGUI extends JFrame {
+public class ClientGUI extends JFrame implements Observer {
     ServerWindow serverWindow;
 
     private static final int WIDHT = 400;
     private static final int HEIGHT = 400;
 
-    JTextArea chat;
+    JTextArea log = new JTextArea();
 
     private final JPanel panelTop = new JPanel(new GridLayout(2,3));
     private final JTextField tfIPAdress = new JTextField("127.0.0.1");
@@ -30,12 +23,11 @@ public class ClientGUI extends JFrame {
     private final JTextField tfMessage = new JTextField();
     private JButton btnSend, btnLogin;
 
-    JScrollPane chatArea = new JScrollPane();
-
+    private boolean isLogged;
 
     ClientGUI(ServerWindow serverWindow, String title) {
         this.serverWindow = serverWindow;
-        serverWindow.addClient(this);
+        serverWindow.addObserver(this);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -51,7 +43,7 @@ public class ClientGUI extends JFrame {
         panelBottom.add(tfMessage, BorderLayout.CENTER);
         panelBottom.add(createButtonSendMessage(), BorderLayout.EAST);
         add(panelBottom, BorderLayout.SOUTH);
-        add(chatArea);
+        add(log);
         setVisible(true);
 
     }
@@ -61,7 +53,7 @@ public class ClientGUI extends JFrame {
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                login();
             }
         });
 
@@ -82,22 +74,45 @@ public class ClientGUI extends JFrame {
 
 
     private void login(){
+        if (!isLogged){
+            if (serverWindow.isServerWorking()){
+                log.append("Вы успешно подключились!\n");
+                serverWindow.addLog(String.format("%s подключился к беседе\n", tfLogin.getText()));
+                isLogged = true;
+            } else {
+                log.append("Невозможно подключиться к серверу\n");
+            }
+        } else {
+            log.append("Вы уже авторизованы\n");
+        }
+
 
     }
 
 
     private void sendMessage(){
-        String message = tfMessage.getText();
-        tfMessage.setText("");
-        Message message1 = new Message(message, this);
-        serverWindow.addMessage(message1);
-        serverWindow.updateChat();
+        String message;
+        if (isLogged) {
+            message = tfLogin.getText() + ": " + tfMessage.getText() + "\n";
+            tfMessage.setText("");
+            serverWindow.addMessage(message);
+            serverWindow.addLog(message);
+        } else {
+            message = "Необходимо вначале авторизоваться\n";
+            log.append(message);
+        }
     }
 
 
-    public String clientInfo(){
-        return tfLogin.getText();
+    @Override
+    public void updateMessages(String message) {
+      //  chat.setText("");
+        if(isLogged){
+            log.append(message);
+      }
     }
 
-
+    public JTextField getTfLogin() {
+        return tfLogin;
+    }
 }
