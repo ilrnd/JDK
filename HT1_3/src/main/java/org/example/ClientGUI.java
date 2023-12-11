@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 /**
  * Класс клиентского окна
  */
-public class ClientGUI extends JFrame implements Observer {
+public class ClientGUI extends JFrame {
     ServerWindow serverWindow;
 
     private static final int WIDHT = 400;
@@ -21,13 +21,15 @@ public class ClientGUI extends JFrame implements Observer {
     private final JPanel panelTop = new JPanel(new GridLayout(2,3));
     private final JTextField tfIPAdress = new JTextField("127.0.0.1");
     private final JTextField tfPort = new JTextField("8189");
-    private final JTextField tfLogin = new JTextField("test_user");
+    public final JTextField tfLogin = new JTextField("test_user");
     private final  JPasswordField tfPassword = new JPasswordField("test");
     private final JPanel panelBottom = new JPanel(new BorderLayout());
     private JTextField tfMessage;
     private JButton btnSend, btnLogin, btnLogOut;
 
     private boolean isLogged;
+
+    private String statusConnection;
 
     /**
      * Конструктор клиентского окна
@@ -51,7 +53,8 @@ public class ClientGUI extends JFrame implements Observer {
         panelBottom.add(createTfMessage(), BorderLayout.CENTER);
         panelBottom.add(createButtonSendMessage(), BorderLayout.EAST);
         add(panelBottom, BorderLayout.SOUTH);
-        add(log);
+        JScrollPane jScrollPane = new JScrollPane(log);
+        add(jScrollPane);
         log.setEditable(false);
         setVisible(true);
 
@@ -111,6 +114,10 @@ public class ClientGUI extends JFrame implements Observer {
 
             }
 
+            /**
+             * Перегрузка метода нажатия на клавишу Enter
+             * @param e the event to be processed
+             */
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER){
@@ -134,21 +141,21 @@ public class ClientGUI extends JFrame implements Observer {
     private void login(){
         if (!isLogged){
             if (serverWindow.isServerWorking()){
-                log.append("Вы успешно подключились!\n");
-                serverWindow.addMsg(String.format("%s подключился к беседе\n", tfLogin.getText()));
+                statusConnection = "Вы успешно подключились!\n";
                 isLogged = true;
                 tfLogin.setEditable(false);
                 tfIPAdress.setEditable(false);
                 tfPort.setEditable(false);
                 tfPassword.setEditable(false);
-                serverWindow.addObserver(this); // 1
-
-                serverWindow.addGUI(this); // 2
+                serverWindow.addGUI(this);
+                serverWindow.updateLog();
             } else {
-                log.append("Невозможно подключиться к серверу\n");
+                statusConnection = "Невозможно подключиться к серверу\n";
+                log.append(statusConnection);
             }
         } else {
-            log.append("Вы уже авторизованы\n");
+            statusConnection = "Вы уже авторизованы\n";
+            log.append(statusConnection);
         }
 
 
@@ -158,27 +165,21 @@ public class ClientGUI extends JFrame implements Observer {
      */
     private void logOut(){
         if(isLogged){
-            log.append("Вы успешно отключились от чата!\n");
-            serverWindow.addMsg(String.format("%s вышел из беседы\n", tfLogin.getText()));
+            statusConnection = "Вы успешно отключились от чата!\n";
+            log.append(statusConnection);
             isLogged = false;
             tfLogin.setEditable(true);
             tfIPAdress.setEditable(true);
             tfPort.setEditable(true);
             tfPassword.setEditable(true);
-            serverWindow.removeObserver(this);
-
             serverWindow.removeGUI(this);
 
         } else {
-            log.append("Вы не авторизованы\n");
+            statusConnection = "Вы не авторизованы\n";
+            log.append(statusConnection);
         }
 
     }
-
-/**
- * TODO: Сделать архив чата
- * TODO: при подключении загрузить сообщения
- */
 
     /**
      * Метод отправки сообщения в лог
@@ -189,32 +190,32 @@ public class ClientGUI extends JFrame implements Observer {
             if (isLogged) {
                 message = tfLogin.getText() + ": " + tfMessage.getText() + "\n";
                 tfMessage.setText("");
-                //serverWindow.addMessage(message);
                 serverWindow.addMsg(message);
                 serverWindow.logToFile(message);
-
                 serverWindow.updateLog();
             } else {
-                message = "Необходимо вначале авторизоваться\n";
-                log.append(message);
+                statusConnection = "Необходимо вначале авторизоваться\n";
+                log.append(statusConnection);
             }
         } else {
-            message = "Сервер недоступен\n";
-            log.append(message);
+            statusConnection = "Сервер недоступен\n";
+            log.append(statusConnection);
         }
     }
 
-
-    @Override
-    public void updateMessages(String message) {
-        if(isLogged){
-            log.append(message);
-      }
+    /**
+     * Добавление сообщения
+     * @param message текст сообщения
+     */
+    public void addMsg(String message){
+        this.log.setText(statusConnection + message);
     }
 
-
-    public void addLog(String message){
-        this.log.setText(message);
+    /**
+     * Установка статуса соединения пользователя с сервером (имитация)
+     * @param statusConnection статус подключения
+     */
+    public void setStatusConnection(String statusConnection) {
+        this.statusConnection = statusConnection;
     }
-
 }

@@ -4,16 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Окно сервера
  */
-public class ServerWindow extends JFrame implements Observed{
+public class ServerWindow extends JFrame{
     private static final int POS_X = 500;
     private static final int POS_Y = 550;
     private static final int WIDTH = 400;
@@ -26,16 +26,18 @@ public class ServerWindow extends JFrame implements Observed{
     private final JButton btnStart = new JButton("Start");
     private final JButton btnStop = new JButton("Stop");
     private final JTextArea log = new JTextArea(SERVER_STATUS_OFF);
+
     private boolean isServerWorking;
 
     private String messages = new String();
 
-    private List<Observer> clientGUIS = new ArrayList<>(); // 1
-    private List<ClientGUI> clientGUIList = new ArrayList<>(); // 2
+    private List<ClientGUI> clientGUIList = new ArrayList<>();
 
 
     private FileWriter fileWriter;
     private FileReader fileReader;
+
+    private final File chatLogFile = new File("chatlog.txt");
 
 
     /**
@@ -49,7 +51,9 @@ public class ServerWindow extends JFrame implements Observed{
                 if(isServerWorking) {
                     isServerWorking = false;
                     log.append(SERVER_STATUS_OFF);
-                    addMessage("Сервер отключен\n");
+                    for(ClientGUI clientGUI : clientGUIList){
+                        clientGUI.setStatusConnection("Сервер недоступен\n");
+                    }
                 }
             }
         });
@@ -61,6 +65,11 @@ public class ServerWindow extends JFrame implements Observed{
                 if(!isServerWorking) {
                     isServerWorking = true;
                     log.append(SERVER_STATUS_ON);
+                    for(ClientGUI clientGUI : clientGUIList){
+                        clientGUI.setStatusConnection("Сервер работает\n");
+                    }
+                    readFromLogFile(chatLogFile);
+                    log.append(messages);
                 }
             }
         });
@@ -70,8 +79,8 @@ public class ServerWindow extends JFrame implements Observed{
         setResizable(false);
         setTitle("Chat server");
         setAlwaysOnTop(true);
-
-        add(log);
+        JScrollPane jScrollPane = new JScrollPane(log);
+        add(jScrollPane);
         log.setEditable(false);
 
         JPanel panelBottom = new JPanel(new GridLayout(1,2));
@@ -82,34 +91,7 @@ public class ServerWindow extends JFrame implements Observed{
         setVisible(true);
     }
 
-    /**
-     * Добавление сообщения в лог
-     * @param message - сообщение
-     */
-    public void addMessage(String message){
-        this.messages = message;
-        notifyObserver();
-    }
 
-
-    @Override
-    public void addObserver(Observer observer) {
-        this.clientGUIS.add(observer);
-
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        this.clientGUIS.remove(observer);
-
-    }
-
-    @Override
-    public void notifyObserver() {
-        for (Observer observer : clientGUIS){
-            observer.updateMessages(this.messages);
-        }
-    }
 
     /**
      * Метод проверки состояния сервера
@@ -132,11 +114,10 @@ public class ServerWindow extends JFrame implements Observed{
      * Логирование чата в файл
      * @param text - лог
      */
-
     public void logToFile(String text){
         fileWriter = null;
         try {
-            fileWriter = new FileWriter("chatlog.txt", true);
+            fileWriter = new FileWriter(chatLogFile, true);
             fileWriter.write(text);
             fileWriter.close();
         } catch (IOException e){
@@ -144,24 +125,48 @@ public class ServerWindow extends JFrame implements Observed{
         }
     }
 
-    public JTextArea getLog() {
-        return log;
+    /**
+     * Чтение записи чата из файла
+     * @param file - файл лога чата
+     */
+    public void readFromLogFile(File file){
+        StringBuilder  stringBuilder = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(chatLogFile));
+            String str;
+            while ((str = bufferedReader.readLine()) != null){
+                stringBuilder.append(str).append("\n");
+            }
+        } catch (IOException e) {
+            this.log.append("Неудачная попытка чтения чата из файла");
+        }
+        messages = stringBuilder.toString();
     }
 
     /**
-     * TEST!!!
-     * @param clientGUI
+     * Добавление подключения пользователя к серверу (имитация)
+     * @param clientGUI пользователь
      */
     public void addGUI(ClientGUI clientGUI){
         this.clientGUIList.add(clientGUI);
+        this.log.append(String.format("%s подключился к беседе\n", clientGUI.tfLogin.getText()));
     }
 
+    /**
+     * Удаление подключения пользователя к серверу (имитация)
+     * @param clientGUI пользователь
+     */
     public void removeGUI(ClientGUI clientGUI){
         this.clientGUIList.remove(clientGUI);
+        this.log.append(String.format("%s вышел из беседы\n", clientGUI.tfLogin.getText()));
     }
+
+    /**
+     * Обновление лога чата
+     */
     public void updateLog(){
         for (ClientGUI clientGUI: clientGUIList){
-            clientGUI.addLog(messages);
+            clientGUI.addMsg(messages);
         }
     }
 }
