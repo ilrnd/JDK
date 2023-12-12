@@ -138,7 +138,7 @@ public class ServerWindow extends JFrame{
                 stringBuilder.append(str).append("\n");
             }
         } catch (IOException e) {
-            this.log.append("Неудачная попытка чтения чата из файла");
+            this.log.append("Неудачная попытка чтения чата из файла\n");
         }
         messages = stringBuilder.toString();
     }
