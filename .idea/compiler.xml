@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="HT1_3" />
         <module name="HT1_2" />
+        <module name="HT2_1" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
