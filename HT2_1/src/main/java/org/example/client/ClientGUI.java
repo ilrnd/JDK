@@ -4,10 +4,7 @@ import org.example.server.ServerWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 /**
  * Класс клиентского окна
@@ -29,10 +26,6 @@ public class ClientGUI extends JFrame implements ClientView {
     private final JPanel panelBottom = new JPanel(new BorderLayout());
     private JTextField tfMessage;
     private JButton btnSend, btnLogin, btnLogOut;
-
-    private boolean isLogged;
-
-    private String statusConnection;
 
     /**
      * Конструктор клиентского окна
@@ -102,7 +95,7 @@ public class ClientGUI extends JFrame implements ClientView {
             public void actionPerformed(ActionEvent e) {
                 String message = tfLogin.getText() + ": " + tfMessage.getText() + "\n";
                 sendMessage(message);
-            } /// TODO
+            }
         });
         return btnSend;
     }
@@ -150,6 +143,8 @@ public class ClientGUI extends JFrame implements ClientView {
             client.connectToServer(new User(tfLogin.getText(), tfPassword.getText(), tfIPAdress.getText(), tfPort.getText()));
             log.append("Вы успешно подключились\n");
             loginPanelEditable(false);
+            client.getMessage();
+
         } else {
             log.append("Сервер не доступен\n");
         }
@@ -169,23 +164,16 @@ public class ClientGUI extends JFrame implements ClientView {
      */
     @Override
     public void sendMessage(String message){
-//        if(true){
-//            if (isLogged) {
-//                message = tfLogin.getText() + ": " + tfMessage.getText() + "\n";
-//                tfMessage.setText("");
-//                serverWindow.addMsg(message);
-//                serverWindow.logToFile(message);
-//               // serverWindow.updateLog();
-//            } else {
-//                statusConnection = "Необходимо вначале авторизоваться\n";
-//                log.append(statusConnection);
-//            }
-//        } else {
-//            statusConnection = "Сервер недоступен\n";
-//            log.append(statusConnection);
-//        }
-        tfMessage.setText("");
-        client.sendMessage(message);
+        if(serverWindow.getServer() != null){
+            if(!tfMessage.getText().equals("")){
+                tfMessage.setText("");
+                client.sendMessage(message);
+            } else {
+                log.append("Вы пытаетесь отправить пустое сообщение\n");
+            }
+        } else {
+            log.append("Упс... проблемы с сервером");
+        }
     }
 
     @Override
@@ -194,6 +182,10 @@ public class ClientGUI extends JFrame implements ClientView {
     }
 
 
+    /**
+     * Скрытие/активация панелей и кнопок авторизации пользователя
+     * @param isEditable скрыть/показать
+     */
     public void loginPanelEditable(boolean isEditable){
         tfLogin.setEditable(isEditable);
         tfPassword.setEditable(isEditable);
@@ -201,5 +193,18 @@ public class ClientGUI extends JFrame implements ClientView {
         tfPort.setEditable(isEditable);
         btnLogin.setEnabled(isEditable);
         btnLogOut.setEnabled(!isEditable);
+    }
+
+    /**
+     * Метод при закрытии окна чата пользователем
+     * @param e  the window event
+     */
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING){
+            if(client != null)
+            client.disconnectFromServer();
+        }
     }
 }

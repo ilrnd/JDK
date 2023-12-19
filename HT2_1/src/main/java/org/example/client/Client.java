@@ -23,14 +23,13 @@ public class Client {
     }
 
     public void sendMessage(String message){
-        server.getMessageFromClient(message);
-        server.answerToClients();
+            server.getMessageFromClient(message);
+            server.answerToClients();
     }
 
-    public String getMessage(){
+    public void getMessage(){
        String messages = server.getMessages();
        clientView.getMessage(messages);
-       return messages;
     }
 
     public User getUser() {

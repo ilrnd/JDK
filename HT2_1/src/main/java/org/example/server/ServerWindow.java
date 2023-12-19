@@ -29,20 +29,10 @@ public class ServerWindow extends JFrame implements ServerView{
     private final JButton btnStop = new JButton("Stop");
     public JTextArea log = new JTextArea(SERVER_STATUS_OFF);
 
-    private String messages = new String();
-
-
-    private FileWriter fileWriter;
-    private FileReader fileReader;
-
-    private final File chatLogFile = new File("chatlog.txt");
-
-
     /**
      * Конструктор окна сервера
      */
     public ServerWindow() {
-        //setServerStatus(false);
         btnStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,14 +44,9 @@ public class ServerWindow extends JFrame implements ServerView{
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                if(!getServerStatus()) {
-//                    setServerStatus(true);
-//                    log.append(SERVER_STATUS_ON);
-//                    readFromLogFile(chatLogFile);
-//                    log.append(messages);
-//                }
                 createServer();
                 log.append(SERVER_STATUS_ON);
+                log.append(server.getMessages());
             }
         });
 
@@ -82,51 +67,8 @@ public class ServerWindow extends JFrame implements ServerView{
         setVisible(true);
     }
 
-    /**
-     * Метод заполнения лога серверного окна
-     * @param msg - входящее сообщение
-     */
-    public void addMsg(String msg){
-        this.log.append(msg);
-        messages += msg;
-    }
-
-    /**
-     * Логирование чата в файл
-     * @param text - лог
-     */
-    public void logToFile(String text){
-        fileWriter = null;
-        try {
-            fileWriter = new FileWriter(chatLogFile, true);
-            fileWriter.write(text);
-            fileWriter.close();
-        } catch (IOException e){
-            this.log.append("Неудачная попытка записи чата в файл");
-        }
-    }
-
-    /**
-     * Чтение записи чата из файла
-     * @param file - файл лога чата
-     */
-    public void readFromLogFile(File file){
-        StringBuilder  stringBuilder = new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(chatLogFile));
-            String str;
-            while ((str = bufferedReader.readLine()) != null){
-                stringBuilder.append(str).append("\n");
-            }
-        } catch (IOException e) {
-            this.log.append("Неудачная попытка чтения чата из файла\n");
-        }
-        messages = stringBuilder.toString();
-    }
-
     @Override
     public void connectedUser(Client client) {
-        System.out.println("CONNECTED");
         log.append(client.getUser().getLogin() + " подключился к беседе\n");
     }
 
@@ -146,7 +88,10 @@ public class ServerWindow extends JFrame implements ServerView{
     }
 
 
+    /**
+     * Создание сервера при нажатии кнопки старт
+     */
     public void createServer(){
-        server = new Server(this);
+        server = new Server(this, new FileRepository());
     }
 }

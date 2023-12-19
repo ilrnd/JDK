@@ -7,12 +7,15 @@ import java.util.List;
 
 public class Server {
     private ServerView serverView;
+    private Logged logged;
     private String messages = "";
 
     private List<Client> clients = new ArrayList<>();
 
-    public Server(ServerView serverView) {
+    public Server(ServerView serverView,Logged logged) {
         this.serverView = serverView;
+        this.logged = logged;
+        messages = logged.readLog();
     }
     public void connectClient(Client client){
             clients.add(client);
@@ -27,6 +30,7 @@ public class Server {
     public void getMessageFromClient(String message){
         messages += message;
         serverView.getMessageFromUser(message);
+        logged.writeLog(message);
     }
 
     public void answerToClients(){
