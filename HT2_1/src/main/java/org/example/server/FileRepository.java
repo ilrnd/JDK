@@ -4,7 +4,6 @@ import java.io.*;
 
 public class FileRepository implements Logged{
     private FileWriter  fileWriter;
-    private FileReader fileReader;
     private final File chatLogFile = new File("chatlog.txt");
 
 
