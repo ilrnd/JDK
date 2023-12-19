@@ -16,7 +16,7 @@ public class ClientGUI extends JFrame implements ClientView {
     private static final int WIDHT = 400;
     private static final int HEIGHT = 400;
 
-    JTextArea log = new JTextArea();
+    private final JTextArea log = new JTextArea();
 
     private final JPanel panelTop = new JPanel(new GridLayout(2,3));
     private final JTextField tfIPAdress = new JTextField("127.0.0.1");
@@ -109,7 +109,6 @@ public class ClientGUI extends JFrame implements ClientView {
         tfMessage.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
             }
 
             /**
@@ -119,7 +118,8 @@ public class ClientGUI extends JFrame implements ClientView {
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    sendMessage("test"); /// TODO
+                    String message = tfLogin.getText() + ": " + tfMessage.getText() + "\n";
+                    sendMessage(message);
                 }
 
             }
@@ -141,9 +141,9 @@ public class ClientGUI extends JFrame implements ClientView {
         if(serverWindow.getServer() != null){
             client = new Client(this, serverWindow.getServer());
             client.connectToServer(new User(tfLogin.getText(), tfPassword.getText(), tfIPAdress.getText(), tfPort.getText()));
-            log.append("Вы успешно подключились\n");
             loginPanelEditable(false);
             client.getMessage();
+            log.append("Вы успешно подключились\n");
 
         } else {
             log.append("Сервер не доступен\n");
@@ -154,6 +154,7 @@ public class ClientGUI extends JFrame implements ClientView {
      */
     @Override
     public void logOut(){
+        log.setText("");
         log.append("Вы вышли из беседы\n");
         client.disconnectFromServer();
         loginPanelEditable(true);
@@ -172,13 +173,23 @@ public class ClientGUI extends JFrame implements ClientView {
                 log.append("Вы пытаетесь отправить пустое сообщение\n");
             }
         } else {
-            log.append("Упс... проблемы с сервером");
+            log.append("Упс... проблемы с сервером\n");
         }
     }
 
+    /**
+     * Метод получения соообщений с сервера
+     * @param message - сообщения
+     */
     @Override
     public void getMessage(String message) {
         log.setText(message);
+    }
+
+    @Override
+    public void shutDownServer() {
+        log.setText("Сервер отключился... Мы уже работаем над этим\n");
+        loginPanelEditable(true);
     }
 
 
@@ -203,8 +214,9 @@ public class ClientGUI extends JFrame implements ClientView {
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if (e.getID() == WindowEvent.WINDOW_CLOSING){
-            if(client != null)
-            client.disconnectFromServer();
+            if(client != null) {
+                client.disconnectFromServer();
+            }
         }
     }
 }

@@ -1,20 +1,12 @@
-Ilya: Привет
-Ilya: Как жизнь?
-Ivan: Все ок.
-test_user: s
-test_user: sdsad
-test_user: asd
-test_user: as
-test_user: dsf
+Ivan: Hello!
+Ilya: Hi
+test_user: sad
 test_user: asd
 test_user: asd
-test_user: 1111
-test_user: 2222
-test_user: 1
-test_user: sd
-test_user: s123
+test_user: asf
 test_user: asd
-test_user: asd
-test_user: asd
-test_user: 23
-test_user: sa
+test_user: смя
+test_user: f
+test_user: lll
+1: фыв
+Ivan: adf

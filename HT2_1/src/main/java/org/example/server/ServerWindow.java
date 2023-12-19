@@ -36,8 +36,12 @@ public class ServerWindow extends JFrame implements ServerView{
         btnStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                server = null;
-                log.append(SERVER_STATUS_OFF);
+                if(server != null){
+                    server.disconnectAllClients();
+                    server = null;
+                    log.setText("");
+                    log.append(SERVER_STATUS_OFF);
+                }
             }
         });
 
@@ -78,7 +82,7 @@ public class ServerWindow extends JFrame implements ServerView{
     }
 
     @Override
-    public void getMessageFromUser(String message) {
+    public void getMessageFromClient(String message) {
         log.append(message);
     }
 

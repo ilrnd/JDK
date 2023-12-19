@@ -1,5 +1,8 @@
 package org.example.client;
 
+/**
+ * Класс пользователя
+ */
 public class User {
     private String login;
     private String password;

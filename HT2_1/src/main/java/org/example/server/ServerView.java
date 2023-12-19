@@ -6,17 +6,21 @@ public interface ServerView {
 
 
     /**
-     * Подключение пользователя к серверу
+     * Подключение клиента к серверу
      * @param client клиент, подключаемый к серверу
      */
     void connectedUser(Client client);
 
     /**
-     * Отключение пользователя от сервера
+     * Отключение клиента от сервера
      * @param client клиент, отключаемый от сервера
      */
     void disconnectedUser(Client client);
 
-    void getMessageFromUser(String message);
+    /**
+     * Получение сообщения от клиента
+     * @param message сообщение
+     */
+    void getMessageFromClient(String message);
 
 }
