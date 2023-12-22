@@ -1,6 +1,6 @@
 package org.example;
 
-public class MyCalc<T> {
+public class MyCalc {
     public static <T extends Number> double sum(T num1, T num2){
         return num1.doubleValue() + num2.doubleValue();
     }
