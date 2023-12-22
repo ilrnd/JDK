@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="HT1_3" />
+        <module name="HT3_1" />
         <module name="HT1_2" />
         <module name="HT2_1" />
       </profile>
