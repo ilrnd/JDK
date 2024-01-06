@@ -10,3 +10,7 @@ https://github.com/ilrnd/JDK/tree/main/HT2_1/src/main/java/org/example
 1. HT3_1 https://github.com/ilrnd/JDK/tree/main/HT3_1/src/main/java/org/example
 2. HT3_2 https://github.com/ilrnd/JDK/tree/main/HT3_2/src/main/java/org/example
 3. HT3_3 https://github.com/ilrnd/JDK/tree/main/HT3_3/src/main/java/org/example
+
+Домашняя работа к 4-му семинару:
+
+https://github.com/ilrnd/JDK/tree/main/HT4/src/main/java/org/example
