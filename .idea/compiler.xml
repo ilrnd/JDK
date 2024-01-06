@@ -12,6 +12,7 @@
         <module name="HT2_1" />
         <module name="HT3_3" />
         <module name="HT3_2" />
+        <module name="HT4" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
