@@ -14,3 +14,7 @@ https://github.com/ilrnd/JDK/tree/main/HT2_1/src/main/java/org/example
 Домашняя работа к 4-му семинару:
 
 https://github.com/ilrnd/JDK/tree/main/HT4/src/main/java/org/example
+
+Домашняя работа к 5-му семинару:
+
+https://github.com/ilrnd/JDK/tree/main/HT5/src/main/java/org/example
