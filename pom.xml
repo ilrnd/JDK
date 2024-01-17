@@ -17,6 +17,7 @@
         <module>HT3_2</module>
         <module>HT3_3</module>
         <module>HT4</module>
+        <module>HT5</module>
     </modules>
 
     <properties>
